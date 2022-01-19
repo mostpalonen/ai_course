@@ -119,7 +119,7 @@ def shortest_path(source, target):
 
     # Initialize the queue and explored nodes set
     root = Node(source, "root", "none")
-    explored = StackFrontier()
+    explored = []
     queue = QueueFrontier()
     queue.add(root)
 
@@ -128,13 +128,13 @@ def shortest_path(source, target):
     while not goal:
         if queue.empty(): return None            # Check if queue empty => people not connected
         current = queue.remove()                 # First item in queue
-        explored.add(current)                    # Add to explored nodes
+        explored.add(current.state)              # Add to explored nodes
         if current.state == target: goal = True  # Goal check.
 
         # Find neighbors for node and add new ones to queue
         neighbors = neighbors_for_person(current.state)
         for next in neighbors:
-            if not explored.contains_state(next[1]):
+            if not (next[1] in explored):
                 new = Node(next[1], current, next[0])
                 queue.add(new)
 
