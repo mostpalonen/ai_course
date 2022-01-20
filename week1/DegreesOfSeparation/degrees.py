@@ -128,25 +128,33 @@ def shortest_path(source, target):
     while not goal:
         if queue.empty(): return None            # Check if queue empty => people not connected
         current = queue.remove()                 # First item in queue
-        explored.add(current.state)              # Add to explored nodes
-        if current.state == target: goal = True  # Goal check.
+        explored.append(current.state)           # Add to explored nodes
 
         # Find neighbors for node and add new ones to queue
         neighbors = neighbors_for_person(current.state)
         for next in neighbors:
-            if not (next[1] in explored):
-                new = Node(next[1], current, next[0])
-                queue.add(new)
+            # Next person is the target -> add him and end search
+            if next[1] == target:
+                last_person = Node(next[1], current, next[0])
+                current = last_person
 
-    # Reverse through the explored nodes and build optimal solution path
-    path = []
-    target_node = current
-    while target_node.parent != "root":
-        pair = (target_node.action, target_node.state)
-        path.append(pair)
-        target_node = target_node.parent
-    path.reverse()
-    return path
+                # Reverse through the explored nodes and build optimal solution path
+                path = []
+                target_node = current
+                while target_node.parent != "root":
+                    pair = (target_node.action, target_node.state)
+                    path.append(pair)
+                    target_node = target_node.parent
+                path.reverse()
+                goal = True
+                return path
+
+            # Found new person -> add to queue
+            else:
+                if not (next[1] in explored):
+                    new = Node(next[1], current, next[0])
+                    queue.add(new)
+
     
 def person_id_for_name(name, is_verbose):
     """
