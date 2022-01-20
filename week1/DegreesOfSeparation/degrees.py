@@ -113,9 +113,7 @@ def shortest_path(source, target):
     If no possible path, returns None.
     """
 
-    if source == target:
-        print("Error! Same source and target")
-        return None
+    if source == target: return None
 
     # Initialize the queue and explored nodes set
     root = Node(source, "root", "none")
