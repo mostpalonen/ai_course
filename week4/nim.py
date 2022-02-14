@@ -106,9 +106,6 @@ class NimAI():
         If no Q-value exists yet in `self.q`, return 0.
         """
 
-        # if (tuple(state), action) in self.q
-        #       return self.q[(tuple(state), action)]
-        # else return 0
         return self.q[(tuple(state), action)] if (tuple(state), action) in self.q else 0
 
 
@@ -126,7 +123,7 @@ class NimAI():
         is the sum of the current reward and estimated future rewards.
         """
 
-        self.q[(tuple(state), action)] = old_q + self.alpha * (future_rewards + reward - old_q)
+        self.q[(tuple(state), action)] = old_q + self.alpha * ((future_rewards + reward) - old_q)
 
 
     def best_future_reward(self, state):
@@ -163,21 +160,18 @@ class NimAI():
         options is an acceptable return value.
         """
 
+        # Get all available actions and the known best reward from the state
         best_action = None
-        best_reward = 0
         actions = list(Nim.available_actions(state))
+        best_reward = NimAI.best_future_reward(self, state)
+
+        # Get the action that corresponds to the highest possible reward
         for action in actions:
-            q_val = self.get_q_value(state, action)
-            if best_action is None or q_val > best_reward:
-                best_reward = q_val
+            if best_action is None or best_reward == self.get_q_value(state, action):
                 best_action = action
 
         if epsilon:
-            # for action in actions
-            #   if action == best_action
-            #       weights = (1 - self.epsilon)
-            #   else 
-            #       weights = self.epsilon
+            # Iteratively get weighting for every possible action and choose action randomly
             weights = [(1 - self.epsilon) if action == best_action else self.epsilon for action in actions]
             best_action = random.choices(actions, weights=weights, k=1)[0]
 
